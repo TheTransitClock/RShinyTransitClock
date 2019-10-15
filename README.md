@@ -3,7 +3,7 @@ A prototype RShiny application to visualize some of the data in TheTransitClock 
 ## Events ##
 This page shows the vehicle events that have happened on the route. 
 ![](screenshots/Events.PNG)
-## Prediction Accuracys ##
+## Prediction Accuracy by Stop ##
 This page shows the quality of the predictions by stop. The smaller the circle on a stop the better the prediction quality.
 ![](screenshots/PredictonQualityByStop.PNG)
 ## Arrivals and Departures ##
