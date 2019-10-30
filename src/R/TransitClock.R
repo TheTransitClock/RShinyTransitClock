@@ -1,3 +1,24 @@
+transitclock.getErrors <- function(con, startdate, enddate, min_horizon, max_horizon, start_time, end_time)
+{
+  print("Calling transitclock.getErrors()")
+  error_query <- getSQL("./src/SQL/ErrorDistribution.sql")
+  
+  error_query <- gsub(":start_date", startdate, error_query)
+  
+  error_query <- gsub(":end_date", enddate, error_query)
+  error_query <- gsub(":min_horizon", min_horizon, error_query)
+  error_query <- gsub(":max_horizon", max_horizon, error_query)
+  error_query <- gsub(":start_time", start_time, error_query)
+  error_query <- gsub(":end_time", end_time, error_query)
+ 
+  
+  
+  result <- dbGetQuery(con, error_query)
+  print("Finished transitclock.getErrors()")
+  return(result)
+  
+}
+
 transitclock.getRoutes <- function(con)
 {
   routes_query <-
@@ -6,6 +27,41 @@ transitclock.getRoutes <- function(con)
   result <- dbGetQuery(con, routes_query)
   
   return(result)
+}
+transitclock.getNumberEventsByRoute <- function(con, startdate, enddate)
+{
+  print("Calling transitclock.getNumberEventsByRoute()")
+  
+  query_events <-
+    getSQL("./src/SQL/NumberEventsByRoute.sql")
+  
+  query_events <- gsub(":startdate", startdate, query_events)
+  
+  query_events <- gsub(":enddate", enddate, query_events)
+  
+  result <- dbGetQuery(con, query_events)
+  
+  print("Finished transitclock.getNumberEventsByRoute()")
+  
+  return(result)  
+}
+transitclock.getPredictions <- function(con, route, direction, startdate, enddate)
+{
+  print("Calling transitclock.getPredictions()")
+  query_events <-
+    getSQL("./src/SQL/Predictions.sql")
+  
+  query_events <- gsub(":route", route, query_events)
+  
+  query_events <- gsub(":direction", direction, query_events)
+  
+  query_events <- gsub(":startdate", startdate, query_events)
+  
+  query_events <- gsub(":enddate", enddate, query_events)
+  
+  result <- dbGetQuery(con, query_events)
+  print("Finished transitclock.getPredictions()")
+  return(result)  
 }
 transitclock.getArrivalsDepartures <- function(con, route, direction, startdate, enddate)
 {
