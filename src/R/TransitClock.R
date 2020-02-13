@@ -78,6 +78,7 @@ transitclock.getArrivalsDepartures <- function(con, route, direction, startdate,
   query_events <- gsub(":enddate", enddate, query_events)
   
   result <- dbGetQuery(con, query_events)
+  print(query_events)
   print("Finished transitclock.getArrivalsDepartures()")
   return(result)  
 }
@@ -114,6 +115,7 @@ transitclock.getAccuracyData <-
     query <- gsub(":enddate", enddate, query)
     
     result <- dbGetQuery(con, query)
+    print (query)
     print("Finished transitclock.getAccuracyData()")
     return(result)
     

@@ -8,7 +8,7 @@ CASE WHEN ve.eventType = 'No Match' THEN 'red'
  END
  as color,
  t.directionId as direction
-from transitime_mnrt.VehicleEvents ve  
+from VehicleEvents ve  
 left join Trips t on  ve.tripId =t.tripId and t.configRev=(select configRev from ActiveRevisions)
 where time BETWEEN ':startdate' AND ':enddate'
 and ve.routeShortname=':route' 

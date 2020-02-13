@@ -1,5 +1,5 @@
 select 
-        sum(abs((error)/(horizon)))/count(*) as measure, 
+        sum(abs((error::float))::float/horizon::float)::float/count(*) as measure, 
         count(*), 
         concat( q.routeid,':',directionid,':',q.stopid ) as label,
         q.stopid,
@@ -15,7 +15,7 @@ select
         END
                 as color 
 from 
-        transitime_mnrt.pdqv q 
+        pdqv q 
         left join Stops s on s.id = q.stopid and s.configRev = (select max(configRev) from ActiveRevisions)
 		left join StopPaths sp on sp.stopId = s.id and sp.gtfsStopSeq=q.gtfsStopSeq and sp.routeid=q.routeid and  sp.configRev = (select configRev from ActiveRevisions)
 where 
@@ -23,7 +23,10 @@ where
         and q.routeid=(select distinct(r.id) from Routes r where r.configRev = (select max(configRev) from ActiveRevisions) and r.shortName=':route')
         and q.gtfsstopseq is not null and directionid=':direction' 
         and q.configRev = (select max(configRev) from ConfigRevision)
+        and horizon>0
+       
 group by 
-stopid, s.lat, s.lon,  routeid, directionid, s.timepointstop 
+q.stopid, s.lat, s.lon,  q.routeid, directionid, s.timepointstop, sp.layoverStop,
+        sp.waitStop
 order by 
 measure desc
