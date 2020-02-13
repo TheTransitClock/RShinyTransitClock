@@ -10,7 +10,7 @@ This page shows the quality of the predictions by stop. The smaller the circle o
 This shows the arrivals and departures on a graph. Time is on the horizontal axis and GTFS stop seqeunce is on the vertical axis.
 ![](screenshots/ArrivalsDeparatures.PNG)
 ## Predicton Accuracy
-This page is an intercal chart which give an good view of prediction quality.
+This page is an intercal chart which gives a view of prediction quality.
 ![](screenshots/IntervalChart.PNG)
 
 
