@@ -23,6 +23,7 @@ library(ggplot2)
 library(ggpubr)
 library("RPostgres")
 library(plotly)
+library(data.table)
 source("src/R/GetSQL.R")
 source("src/R/TransitClock.R")
 source("src/R/TransitClockDraw.R")
@@ -86,8 +87,8 @@ ui <- dashboardPage(
               tabBox(
                 id = "tabsetquality",
                 side = "left",
-                tabPanel("Error distribution", plotOutput("errordistribution"))
-                
+                tabPanel("Error distribution", plotOutput("errordistribution")),
+                tabPanel("Interval chart", plotOutput("intervalchart"))
               ),
               box(
                 side = "right",
@@ -164,6 +165,16 @@ ui <- dashboardPage(
 # Define server logic required to draw a histogram
 
 server <- function(input, output) {
+  
+  output$eventmap <- renderLeaflet({
+    leaflet() %>% addTiles() %>% setView(-97.733330, 30.266666, zoom = 10)
+    
+  })
+  output$predictionmap <- renderLeaflet({
+    leaflet() %>% addTiles() %>% setView(-97.733330, 30.266666, zoom = 10)
+  })
+  
+  
   v <- reactiveValues(doPlot = FALSE)
   
   points <- reactiveValues()
@@ -231,20 +242,17 @@ server <- function(input, output) {
                          input$sampleendtime
                        )
                      }
+                     if(input$tabsetquality=="Interval chart")
+                     {
+                       transitclock.drawInterval(output,
+                                                   pool,
+                                                   input$startdate,
+                                                   input$enddate,
+                                                    "TransitClock")
+                     }
                    }
                  })
   
-  
-  output$eventmap <- renderLeaflet({
-    leaflet() %>% addTiles() %>% setView(-97.733330, 30.266666, zoom = 10)
-    
-  })
-  output$predictionmap <- renderLeaflet({
-    leaflet() %>% addTiles() %>% setView(-97.733330, 30.266666, zoom = 10)
-  })
-  
- 
-
   
 }
 # Run the application

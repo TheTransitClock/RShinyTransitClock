@@ -3,7 +3,40 @@ pal <-
     palette = c("blue", "green", "red", "orange", "darkviolet", "orange3"),
     levels = c("blue", "green", "red", "orange", "darkviolet", "orange3")
   )
-
+transitclock.drawInterval <- function(output, con,startdate,
+                                      enddate, source)
+{
+  result=transitclock.getIntervalData(con,startdate,enddate, source)
+  
+  print(result);
+  
+  data_quantile=do.call("rbind",tapply(result$error,result$horizon, quantile, c(0.05, 0.125, 0.5, 0.875, 0.95)))
+  
+  pred <- setDT(as.data.frame(data_quantile), keep.rownames = TRUE)[]
+  colnames(pred) <- c('horizon', 'P_05', 'P_15', 'P_50', 'P_85', 'P_95')
+  pred$horizon <- as.numeric(pred$horizon)
+  
+  output$intervalchart <-renderPlot({ggplot() +
+    geom_line(data = pred, aes(y=P_05, x=horizon, color="TheTransitClock"), size=0) +
+    geom_line(data = pred, aes(y=P_15, x=horizon, color="TheTransitClock"), size=0)+
+    geom_line(data = pred, aes(y=P_50, x=horizon, color="TheTransitClock"), size=0.5)+
+    geom_line(data = pred, aes(y=P_85, x=horizon, color="TheTransitClock"), size=0)+
+    geom_line(data = pred, aes(y=P_95, x=horizon, color="TheTransitClock"), size=0)+
+    geom_ribbon(data = pred, aes(ymin=P_05,ymax=P_15, x=horizon, fill="TheTransitClock", alpha="90 Percent"))+
+    geom_ribbon(data = pred, aes(ymin=P_15,ymax=P_50, x=horizon, fill="TheTransitClock", alpha="75 Percent"))+
+    geom_ribbon(data = pred, aes(ymin=P_50,ymax=P_85, x=horizon, fill="TheTransitClock", alpha="75 Percent"))+
+    geom_ribbon(data = pred, aes(ymin=P_85,ymax=P_95, x=horizon, fill="TheTransitClock", alpha="90 Percent")) +
+    theme_bw() +
+    theme(axis.title = element_text(face = "bold"), legend.position="bottom",plot.margin = unit(c(0.5,0.5,0.5,0.5), "cm")) + 
+    ggtitle("Prediction Error Quantiles Against Horizon") +
+    ylab("Prediction Error (Actual-Predicted) in Seconds") + xlab("Horizon (Actual-Prediction Time) in Seconds")+
+    scale_x_continuous(expand = c(0, 00), limits = c(0,1200))+
+    #scale_fill_manual(name = "", values = c("NexTrip" = "red", "TheTransitClock" = "blue")) +
+    scale_alpha_manual(name = "", values = c("75 Percent" = 0.4, "90 Percent" = 0.2)) +
+    labs(fill = "Quantile:") + 
+    labs(color = " Median:")
+  })
+}
 transitclock.drawArrivalDepartures <- function(output, con, route,
                                    direction,
                                    startdate,
