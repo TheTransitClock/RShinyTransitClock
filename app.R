@@ -166,14 +166,8 @@ ui <- dashboardPage(
 
 server <- function(input, output) {
   
-  output$eventmap <- renderLeaflet({
-    leaflet() %>% addTiles() %>% setView(-97.733330, 30.266666, zoom = 10)
-    
-  })
-  output$predictionmap <- renderLeaflet({
-    leaflet() %>% addTiles() %>% setView(-97.733330, 30.266666, zoom = 10)
-  })
-  
+ 
+
   
   v <- reactiveValues(doPlot = FALSE)
   
@@ -201,7 +195,7 @@ server <- function(input, output) {
                      print (input$tabsetroute)
                      if (input$tabsetroute == "Events")
                      {
-                       transitclock.drawEvents(pool,
+                       transitclock.drawEvents(output, pool,
                                                input$route,
                                                input$direction,
                                                input$startdate,
@@ -210,7 +204,7 @@ server <- function(input, output) {
                      
                      if (input$tabsetroute == "Predictions")
                      {
-                       transitclock.drawPredictionQuality(pool,
+                       transitclock.drawPredictionQuality(output, pool,
                                                           input$route,
                                                           input$direction,
                                                           input$startdate,

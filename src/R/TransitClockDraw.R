@@ -108,7 +108,7 @@ transitclock.drawErrorDistribution <- function(output, con,
   })
   return()
 }
-transitclock.drawPredictionQuality <- function(con,route,direction,startdate,enddate)
+transitclock.drawPredictionQuality <- function(output, con,route,direction,startdate,enddate)
 {
   stops = transitclock.getStopData(con, route, direction)
   
@@ -118,6 +118,9 @@ transitclock.drawPredictionQuality <- function(con,route,direction,startdate,end
                                         startdate,
                                         enddate)
   
+  output$predictionmap <- renderLeaflet({
+    leaflet() %>% addTiles() %>% setView(-97.733330, 30.266666, zoom = 10)
+  })
   
   tab2 <- leafletProxy('predictionmap') %>%
     clearMarkers() %>%
@@ -145,7 +148,7 @@ transitclock.drawPredictionQuality <- function(con,route,direction,startdate,end
   
   return()
 }
-transitclock.drawEvents <- function(con, route, direction, startdate, enddate)
+transitclock.drawEvents <- function(output, con, route, direction, startdate, enddate)
 {
   stops = transitclock.getStopData(con, route, direction)
   
@@ -156,7 +159,12 @@ transitclock.drawEvents <- function(con, route, direction, startdate, enddate)
     startdate,
     enddate
   )
-  
+
+  output$eventmap <- renderLeaflet({
+    leaflet() %>% addTiles() %>% setView(-97.733330, 30.266666, zoom = 10)
+    
+  })
+    
   tab1 <- leafletProxy('eventmap') %>%
     clearMarkers() %>%
     clearControls() %>%
